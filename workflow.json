@@ -1,0 +1,350 @@
+{
+  "name": "My workflow 8",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "64a40629-0c93-4334-93a8-75f25f5ea422",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $binary.data.data.toString() }}\n",
+        "options": {
+          "systemMessage": "=You are an expert Data Extraction AI. Your task is to read unstructured, messy newspaper-style classified text and extract structured information from each listing.\n\nYou MUST return the output strictly in the following JSON format:\n\n{\n  \"listings\": [\n    {\n      \"campaign\": \"\",\n      \"property_type\": \"\",\n      \"location\": \"\",\n      \"description\": \"\",\n      \"mobile_number\": \"\",\n      \"area_size\": \"\",\n      \"name\": \"\"\n    }\n  ]\n}\n\nCRITICAL EXTRACTION RULES:\n\n1. campaign (Inference):\n   - If the ad uses words like \"Want\", \"Need\", \"Chahiye\", \"Looking for\", \"Required\", \"Buyer\" → classify as \"Buyer\" (for property) or \"Rent In\" (for rentals).\n   - If the ad uses words like \"Available\", \"For Sale\", \"Selling\", \"Uplabdh\", \"Seller\", \"For Rent\" → classify as \"Seller\" (for property) or \"Rent Out\" (for rentals).\n\n2. property_type (Categorization):\n   Choose ONE of these:\n   - \"Plot\"\n   - \"Flat\"\n   - \"House\"\n   - \"Other\" (for shop, office, commercial, etc.)\n\n3. location (Extraction):\n   Extract the clearest location. Prefer a hierarchy like:\n   \"Sublocation, Main Location, City\" if available.\n\n4. description (Summarization):\n   Very short 1-line summary of the ad.\n\n5. mobile_number (Pattern):\n   Extract all 10-digit mobile numbers.\n   If multiple exist, join them separated by commas.\n\n6. area_size (Pattern):\n   Extract size with unit:\n   Example: \"1500 sq.ft.\", \"100 gaj\", \"200 sq yd\", etc.\n\n7. name (Extraction):\n   Extract the contact person's name.\n   If no name is present, set to \"N/A\".\n\nIMPORTANT:\n- For ANY missing data in any field → write \"N/A\".\n- Do NOT leave any field empty.\n- Do NOT add explanations.\n- Do NOT wrap in Markdown.\n- Return ONLY the final JSON exactly in the above structure.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "e1b1b4c0-5c35-4abb-9c79-c05865778b49",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        896,
+        208
+      ],
+      "id": "c2d8c2cf-a712-4cae-b2bf-343b65250766",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1d8bEEUCbE7L95mJ_Ku70f8ZTapsXqwBmsL5fDeVssX0",
+          "mode": "list",
+          "cachedResultName": "real estate ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "category": "{{$json[\"category\"]}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sub_category",
+              "displayName": "sub_category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contact_numbers",
+              "displayName": "contact_numbers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "price",
+              "displayName": "price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "size",
+              "displayName": "size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "other_details",
+              "displayName": "other_details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1600,
+        -16
+      ],
+      "id": "b2058c68-1a5e-4352-97dc-3182e6d751b9",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "w5gJasyWxWVBUI38",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1dmW6zsUzWrmvwALSQBgI2M1diq_hPQ83",
+          "mode": "id"
+        },
+        "options": {
+          "binaryPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        400,
+        0
+      ],
+      "id": "1ce697ae-4ad1-49b6-aa89-9f08d6a13b70",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "ca7XulzhhjnaRazZ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "Epaper_369_2025-11-19_1.txt",
+        "filter": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "07ab5197-52ee-4c10-be8d-b43251334341",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "ca7XulzhhjnaRazZ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        32
+      ],
+      "id": "cec966e0-fc51-46ff-89bc-b46a2d8c7526",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        1616,
+        176
+      ],
+      "id": "3c43dd45-c6cf-4c75-a276-c8359ab0674a"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "380d20b1-1ff8-44cc-a600-71c3cf666c94",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cc4b3b763041e02296a60b75360c703ba7e34ed8f9ee461b6fa2e0514cf0ecd2"
+  },
+  "id": "eHqqNXwE4GzfbzNa",
+  "tags": []
+}
